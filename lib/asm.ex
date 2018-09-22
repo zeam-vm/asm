@@ -13,4 +13,6 @@ defmodule Asm do
   defmacro is_int64(value) do
     quote do: is_integer(unquote(value)) and unquote(value) <= unquote(@max_int) and unquote(value) >= unquote(@min_int)
   end
+
+  def dummy(a), do: a
 end
