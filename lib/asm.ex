@@ -3,16 +3,7 @@ defmodule Asm do
   Documentation for Asm.
   """
 
-  @doc """
-  Hello world.
+  @max_int 9_223_372_036_854_775_807
+  @min_int -9_223_372_036_854_775_808
 
-  ## Examples
-
-      iex> Asm.hello
-      :world
-
-  """
-  def hello do
-    :world
-  end
 end
