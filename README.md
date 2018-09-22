@@ -1,16 +1,18 @@
 # Asm
 
-**TODO: Add description**
+This is aimed at implementing an inline assembler.
+
+Currently, it provides the `is_int64` macro that can be used in `when` clauses to judge that a value is within INT64.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
+The package can be installed
 by adding `asm` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
   [
-    {:asm, "~> 0.1.0"}
+    {:asm, "~> 0.0.1"}
   ]
 end
 ```
