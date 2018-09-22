@@ -8,7 +8,13 @@ defmodule Asm do
   @value -9_223_372_036_854_775_808
 
   @moduledoc """
-  Documentation for Asm.
+  Asm aimed at implementing an inline assembler.
+
+  Currently, it provides the following:
+
+  * `is_int64` macro that can be used in `when` clauses to judge that a value is within INT64.
+  * `max_int` is the constant value of maxium of INT64.
+  * `min_int` is the constant value of minimum of INT64.
   """
 
   @doc """
