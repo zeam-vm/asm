@@ -17,6 +17,18 @@ def deps do
 end
 ```
 
+## Usage
+
+```elixir
+defmodule Foo do
+	require Asm
+	import Asm
+	def add(a, b) when is_int64(a) and is_int64(b) do
+		a + b
+	end
+end
+```
+
 Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at [https://hexdocs.pm/asm](https://hexdocs.pm/asm).
