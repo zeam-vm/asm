@@ -15,7 +15,11 @@ defmodule Asm do
   is_int64(value) returns true if the value is an integer, equals or is less than max_int and equals or is greater than min_int.
   """
   defmacro is_int64(value) do
-    quote do: is_integer(unquote(value)) and unquote(value) <= unquote(Asm.max_int) and unquote(value) >= unquote(Asm.min_int)
+    quote do
+    	is_integer(unquote(value))
+    	and unquote(value) <= unquote(Asm.max_int)
+    	and unquote(value) >= unquote(Asm.min_int)
+    end
   end
 
   def dummy(a), do: a
