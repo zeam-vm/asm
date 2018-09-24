@@ -2,10 +2,10 @@ defmodule Asm do
   use Constants
 
   @name :max_int
-  @value 9_223_372_036_854_775_807
+  @value 0x7fff_ffff_ffff_ffff
 
   @name :min_int
-  @value -9_223_372_036_854_775_808
+  @value -0x8000_0000_0000_0000
 
   @moduledoc """
   Asm aimed at implementing an inline assembler.
