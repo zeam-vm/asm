@@ -135,6 +135,18 @@ defmodule Asm do
   	}
   end
 
+  def when_and_float(func) do
+  	{:when, [context: Elixir],
+  		[
+  			get_func_all("f", func),
+  			{:and, [context: Elixir, import: Kernel],
+  				args(func)
+  				|> Enum.map(& {:is_float, [contezt: Elixir, import: Kernel], [&1]})
+  			}
+  		]
+  	}
+  end
+
   @doc """
   asm generates a fragment of assembly code.
   """
@@ -156,6 +168,7 @@ defmodule Asm do
   		def unquote(func), unquote(do_clause)
   		def unquote(when_and_int64(func)), unquote(do_clause)
   		def unquote(when_and_uint64(func)), unquote(do_clause)
+  		def unquote(when_and_float(func)), unquote(do_clause)
   	end
   end
 end
