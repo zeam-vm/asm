@@ -13,7 +13,7 @@ defmodule Foo do
     a + b
   end
 
-  def_nif adda(a, b), do: asm add a, b
+  def_nif add(a, b), do: asm add a, b
 end
 
 defmodule AsmTest do
@@ -31,6 +31,10 @@ defmodule AsmTest do
 
   test "addb" do
     assert Foo.addb(Asm.max_uint + 1, Asm.min_int - 1) == Asm.max_uint + Asm.min_int
+  end
+
+  test "add" do
+    assert Foo.add(1, 2) == 3
   end
 end
 
