@@ -1,5 +1,6 @@
 defmodule Asm do
   use Constants
+  require OK
 
   @name :max_int
   @value 0x7fff_ffff_ffff_ffff
@@ -61,5 +62,37 @@ defmodule Asm do
     end
   end
 
-  def dummy(a), do: a
+  @doc """
+  wrap_do_clauses(do_clauses) returns do_clauses if do_clause is a list, otherwise wraps by a list.
+	"""
+  def wrap_do_clauses do_clauses do
+  	if is_list(do_clauses) do
+  		do_clauses
+  	else
+  		[do_clauses]
+  	end
+  end
+
+  @doc """
+  Currently, `asm, do: code` generates wrapper Elixir code of the inline assembler.
+  Now, `code` must be `add a, b`.
+  """
+  defmacro asm clauses do
+  	Keyword.get(clauses, :do, nil)
+  	|> wrap_do_clauses
+  	|> Enum.map(& case elem(&1, 0) do
+  			:add -> elem(&1, 2)
+  			_ -> raise ArgumentError, "asm supports only add"
+  		end)
+  	|> Enum.map(& quote do
+  			OK.try do
+  			  result <- {:ok, unquote({:+, [context: Elixir, import: Kernel], &1})}
+  			after
+  				result
+  			rescue
+  				:arithmetic_error -> raise ArithmeticError, message: "bad argument in arithmetic expression"
+  			end
+  		end)
+  end
+
 end

@@ -28,6 +28,7 @@ defmodule Asm.MixProject do
   defp deps do
     [
       {:constants, "~> 0.1.0"},
+      {:ok, "~> 2.0"},
       {:ex_doc, "~> 0.18.0", only: :dev}
     ]
   end
