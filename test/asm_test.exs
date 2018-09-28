@@ -35,6 +35,7 @@ defmodule AsmTest do
 
   test "add" do
     assert Foo.add(1, 2) == 3
+    assert Foo.add_ii(1, 2) == 3
   end
 end
 

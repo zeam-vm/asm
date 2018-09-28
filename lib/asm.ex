@@ -84,6 +84,46 @@ defmodule Asm do
   end
 
   @doc """
+  get_name(func) gets the name of the function.
+  """
+  def get_name(func) do
+  	elem(func, 0)
+  	|> Atom.to_string
+  end
+
+  def args(func) do
+  	elem(func, 2)
+  end
+
+  @doc """
+  arity(func) gets the arity of the function.
+  """
+  def arity(func) do
+  	func |> args |> length
+  end
+
+  def get_name_all_int(func) do
+  	(get_name(func) <> "_" <> (1..arity(func) |> Enum.map(fn _ -> "i" end) |> Enum.join()))
+  	|> String.to_atom
+  end
+
+  def get_func_all_int(func) do
+  	{get_name_all_int(func), elem(func, 1), elem(func, 2)}
+  end
+
+  def when_and_int64(func) do
+  	{:when, [context: Elixir],
+  		[
+  			get_func_all_int(func),
+  			{:and, [context: Elixir, import: Kernel],
+  				args(func)
+  				|> Enum.map(& {{:., [], [{:__aliases__, [alias: false], [:Asm]}, :is_int64]}, [], [&1]})
+  			}
+  		]
+  	}
+  end
+
+  @doc """
   asm generates a fragment of assembly code.
   """
   defmacro asm clause do
@@ -102,6 +142,7 @@ defmodule Asm do
   defmacro def_nif func, do_clause do
   	quote do
   		def unquote(func), unquote(do_clause)
+  		def unquote(when_and_int64(func)), unquote(do_clause)
   	end
   end
 end
