@@ -61,19 +61,31 @@ defmodule Asm do
     end
   end
 
-  defp make_clauses(clause) when is_tuple(clause), do: [clause]
-  defp make_clauses(clauses) when is_list(clauses), do: clauses
+  @doc """
+  make_clauses makes a clause or clauses into a list of it / them.
+  """
+  def make_clauses(clause) when is_tuple(clause), do: [clause]
+  def make_clauses(clauses) when is_list(clauses), do: clauses
 
-  defp unwrap_do(do_clauses) do
+  @doc """
+  unwrap_do eliminates the do header from do clauses and makes them into a list of clauses
+  """
+  def unwrap_do(do_clauses) do
   	do_clauses
   	|> Keyword.get(:do, nil)
   	|> make_clauses
   end
 
-  defp wrap_do(clauses) do
+  @doc """
+  wrap_do generates do clauses wrapping the orginal clauses with :do
+  """
+  def wrap_do(clauses) do
   	Keyword.put([], :do, clauses)
   end
 
+  @doc """
+  asm generates a fragment of assembly code.
+  """
   defmacro asm clause do
  		operands = case elem(clause, 0) do
  			:add -> elem(clause, 2)
@@ -89,11 +101,7 @@ defmodule Asm do
   """
   defmacro def_nif func, do_clause do
   	quote do
-  		def unquote(func), unquote(do_clause
-  				|> unwrap_do
-  				|> wrap_do)
+  		def unquote(func), unquote(do_clause)
   	end
   end
-
-  def dummy(a), do: a
 end
