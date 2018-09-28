@@ -102,22 +102,34 @@ defmodule Asm do
   	func |> args |> length
   end
 
-  def get_name_all_int(func) do
-  	(get_name(func) <> "_" <> (1..arity(func) |> Enum.map(fn _ -> "i" end) |> Enum.join()))
+  def get_name_all(type, func) do
+  	(get_name(func) <> "_" <> (1..arity(func) |> Enum.map(fn _ -> type end) |> Enum.join()))
   	|> String.to_atom
   end
 
-  def get_func_all_int(func) do
-  	{get_name_all_int(func), elem(func, 1), elem(func, 2)}
+  def get_func_all(type, func) do
+  	{get_name_all(type, func), elem(func, 1), elem(func, 2)}
   end
 
   def when_and_int64(func) do
   	{:when, [context: Elixir],
   		[
-  			get_func_all_int(func),
+  			get_func_all("i", func),
   			{:and, [context: Elixir, import: Kernel],
   				args(func)
   				|> Enum.map(& {{:., [], [{:__aliases__, [alias: false], [:Asm]}, :is_int64]}, [], [&1]})
+  			}
+  		]
+  	}
+  end
+
+  def when_and_uint64(func) do
+  	{:when, [context: Elixir],
+  		[
+  			get_func_all("u", func),
+  			{:and, [context: Elixir, import: Kernel],
+  				args(func)
+  				|> Enum.map(& {{:., [], [{:__aliases__, [alias: false], [:Asm]}, :is_uint64]}, [], [&1]})
   			}
   		]
   	}
@@ -143,6 +155,7 @@ defmodule Asm do
   	quote do
   		def unquote(func), unquote(do_clause)
   		def unquote(when_and_int64(func)), unquote(do_clause)
+  		def unquote(when_and_uint64(func)), unquote(do_clause)
   	end
   end
 end
