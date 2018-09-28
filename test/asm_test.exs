@@ -12,6 +12,8 @@ defmodule Foo do
   def addb(a, b) when is_bignum(a) and is_bignum(b) do
     a + b
   end
+
+  def_nif adda(a, b), do: asm add a, b
 end
 
 defmodule AsmTest do

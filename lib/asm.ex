@@ -61,5 +61,39 @@ defmodule Asm do
     end
   end
 
+  defp make_clauses(clause) when is_tuple(clause), do: [clause]
+  defp make_clauses(clauses) when is_list(clauses), do: clauses
+
+  defp unwrap_do(do_clauses) do
+  	do_clauses
+  	|> Keyword.get(:do, nil)
+  	|> make_clauses
+  end
+
+  defp wrap_do(clauses) do
+  	Keyword.put([], :do, clauses)
+  end
+
+  defmacro asm clause do
+ 		operands = case elem(clause, 0) do
+ 			:add -> elem(clause, 2)
+ 			_ -> raise ArgumentError, "asm supports only add"
+ 		end
+ 		quote do
+ 			 unquote({:+, [context: Elixir, import: Kernel], operands})
+ 		end
+  end
+
+  @doc """
+  def_nif defines a NIF that includes micro Elixir code.
+  """
+  defmacro def_nif func, do_clause do
+  	quote do
+  		def unquote(func), unquote(do_clause
+  				|> unwrap_do
+  				|> wrap_do)
+  	end
+  end
+
   def dummy(a), do: a
 end
