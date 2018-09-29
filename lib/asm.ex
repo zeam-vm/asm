@@ -91,6 +91,9 @@ defmodule Asm do
   	|> Atom.to_string
   end
 
+  @doc """
+  args(func) gets the arguments of the function.
+  """
   def args(func) do
   	elem(func, 2)
   end
@@ -102,16 +105,25 @@ defmodule Asm do
   	func |> args |> length
   end
 
+  @doc """
+  get_name_all(type, func) generates a variation of a name of the function :func_ii that has the type like "i".
+  """
   def get_name_all(type, func) do
   	(get_name(func) <> "_" <> (1..arity(func) |> Enum.map(fn _ -> type end) |> Enum.join()))
   	|> String.to_atom
   end
 
+  @doc """
+  get_func_all(type, func) generates a variation of the function :func_ii that has the type like "i", the location of line and the arguments same to the original function.
+  """
   def get_func_all(type, func) do
   	{get_name_all(type, func), elem(func, 1), elem(func, 2)}
   end
 
-  def when_and_int64(func) do
+  @doc """
+  when_and_int64(func) generates the function with a when clause that all of arguments of the function should be int64.
+  """
+  defp when_and_int64(func) do
   	{:when, [context: Elixir],
   		[
   			get_func_all("i", func),
@@ -123,7 +135,10 @@ defmodule Asm do
   	}
   end
 
-  def when_and_uint64(func) do
+  @doc """
+  when_and_uint64(func) generates the function with a when clause that all of arguments of the function should be uint64.
+  """
+  defp when_and_uint64(func) do
   	{:when, [context: Elixir],
   		[
   			get_func_all("u", func),
@@ -135,7 +150,10 @@ defmodule Asm do
   	}
   end
 
-  def when_and_float(func) do
+  @doc """
+  when_and_float64(func) generates the function with a when clause that all of arguments of the function should be float.
+  """
+  defp when_and_float(func) do
   	{:when, [context: Elixir],
   		[
   			get_func_all("f", func),
