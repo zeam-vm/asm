@@ -133,6 +133,18 @@ defmodule Asm do
   end
 
   @doc """
+  get_name_arity(func) gets the name with the arity of the function.
+
+  ## Examples
+    iex> Asm.get_name_arity(quote do: func(a, b))
+    "func/2"
+  """
+  def get_name_arity(func) do
+    get_name(func) <> "/" <> Integer.to_string(arity(func))
+  end
+
+
+  @doc """
   get_name_all(type, func) generates a variation of a name of the function :func_ii that has the type like "i".
 
   ## Examples
@@ -226,15 +238,38 @@ defmodule Asm do
  		end
   end
 
+  def get_env(atom) do
+    atom
+    |> Atom.to_string
+    |> System.get_env
+  end
+
+  def put_env(atom, value) do
+    atom
+    |> Atom.to_string
+    |> System.put_env(value)
+  end
+
   @doc """
   def_nif defines a NIF that includes micro Elixir code.
   """
   defmacro def_nif func, do_clause do
+    put_env(__ENV__.module, get_name_arity(func))
   	quote do
   		def unquote(func), unquote(do_clause)
   		def unquote(when_and_int64(func)), unquote(do_clause)
   		def unquote(when_and_uint64(func)), unquote(do_clause)
   		def unquote(when_and_float(func)), unquote(do_clause)
   	end
+  end
+
+  @doc """
+  """
+  defmacro nif_module do_clause do
+    quote do: unquote(do_clause)
+  end
+
+  defmacro generate_nif do
+    IO.puts get_env(__ENV__.module)
   end
 end

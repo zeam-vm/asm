@@ -13,7 +13,10 @@ defmodule Foo do
     a + b
   end
 
-  def_nif add(a, b), do: asm add a, b
+  nif_module do
+    def_nif add(a, b), do: asm add a, b
+    generate_nif()
+  end
 end
 
 defmodule AsmTest do
