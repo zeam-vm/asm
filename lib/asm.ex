@@ -63,12 +63,23 @@ defmodule Asm do
 
   @doc """
   make_clauses makes a clause or clauses into a list of it / them.
+
+  ## Examples
+    iex> Asm.make_clauses({:tuple})
+    [{:tuple}]
+
+    iex> Asm.make_clauses([{:a}, {:b}])
+    [{:a}, {:b}]
   """
   def make_clauses(clause) when is_tuple(clause), do: [clause]
   def make_clauses(clauses) when is_list(clauses), do: clauses
 
   @doc """
   unwrap_do eliminates the do header from do clauses and makes them into a list of clauses
+
+  ## Examples
+    iex> Asm.wrap_do(quote do: 1 + 2) |> Asm.unwrap_do
+    [{:+, [context: AsmTest, import: Kernel], [1, 2]}]
   """
   def unwrap_do(do_clauses) do
   	do_clauses
@@ -78,6 +89,10 @@ defmodule Asm do
 
   @doc """
   wrap_do generates do clauses wrapping the orginal clauses with :do
+
+  ## Examples
+    iex> Asm.wrap_do(quote do: 1 + 2)
+    [do: {:+, [context: AsmTest, import: Kernel], [1, 2]}]
   """
   def wrap_do(clauses) do
   	Keyword.put([], :do, clauses)
@@ -85,6 +100,10 @@ defmodule Asm do
 
   @doc """
   get_name(func) gets the name of the function.
+
+  ## Examples
+    iex> Asm.get_name(quote do: func(a, b))
+    "func"
   """
   def get_name(func) do
   	elem(func, 0)
@@ -93,6 +112,10 @@ defmodule Asm do
 
   @doc """
   args(func) gets the arguments of the function.
+
+  ## Examples
+    iex> Asm.args(quote do: func(a, b))
+    [{:a, [], AsmTest}, {:b, [], AsmTest}]
   """
   def args(func) do
   	elem(func, 2)
@@ -100,6 +123,10 @@ defmodule Asm do
 
   @doc """
   arity(func) gets the arity of the function.
+
+  ## Examples
+    iex> Asm.arity(quote do: func(a, b))
+    2
   """
   def arity(func) do
   	func |> args |> length
@@ -107,6 +134,10 @@ defmodule Asm do
 
   @doc """
   get_name_all(type, func) generates a variation of a name of the function :func_ii that has the type like "i".
+
+  ## Examples
+    iex> Asm.get_name_all("i", quote do: func(a, b))
+    :func_ii
   """
   def get_name_all(type, func) do
   	(get_name(func) <> "_" <> (1..arity(func) |> Enum.map(fn _ -> type end) |> Enum.join()))
@@ -115,6 +146,10 @@ defmodule Asm do
 
   @doc """
   get_func_all(type, func) generates a variation of the function :func_ii that has the type like "i", the location of line and the arguments same to the original function.
+
+  ## Examples
+    iex> Asm.get_func_all("i", quote do: func(a, b))
+    {:func_ii, [], [{:a, [], AsmTest}, {:b, [], AsmTest}]}
   """
   def get_func_all(type, func) do
   	{get_name_all(type, func), elem(func, 1), elem(func, 2)}
@@ -122,8 +157,13 @@ defmodule Asm do
 
   @doc """
   when_and_int64(func) generates the function with a when clause that all of arguments of the function should be int64.
+
+  ## Examples
+    iex> Asm.when_and_int64(quote do: func(a, b))
+    {:when, [context: Elixir], [{:func_ii, [], [{:a, [], AsmTest}, {:b, [], AsmTest}]}, {:and, [context: Elixir, import: Kernel], [{{:., [], [{:__aliases__, [alias: false], [:Asm]}, :is_int64]}, [], [{:a, [], AsmTest}]}, {{:., [], [{:__aliases__, [alias: false], [:Asm]}, :is_int64]}, [], [{:b, [], AsmTest}]}]}]}
+
   """
-  defp when_and_int64(func) do
+  def when_and_int64(func) do
   	{:when, [context: Elixir],
   		[
   			get_func_all("i", func),
@@ -137,8 +177,12 @@ defmodule Asm do
 
   @doc """
   when_and_uint64(func) generates the function with a when clause that all of arguments of the function should be uint64.
+
+  ## Examples
+    iex> Asm.when_and_uint64(quote do: func(a, b))
+    {:when, [context: Elixir], [{:func_uu, [], [{:a, [], AsmTest}, {:b, [], AsmTest}]}, {:and, [context: Elixir, import: Kernel], [{{:., [], [{:__aliases__, [alias: false], [:Asm]}, :is_uint64]}, [], [{:a, [], AsmTest}]}, {{:., [], [{:__aliases__, [alias: false], [:Asm]}, :is_uint64]}, [], [{:b, [], AsmTest}]}]}]}
   """
-  defp when_and_uint64(func) do
+  def when_and_uint64(func) do
   	{:when, [context: Elixir],
   		[
   			get_func_all("u", func),
@@ -152,8 +196,12 @@ defmodule Asm do
 
   @doc """
   when_and_float64(func) generates the function with a when clause that all of arguments of the function should be float.
+
+  ## Examples
+    iex> Asm.when_and_float(quote do: func(a, b))
+    {:when, [context: Elixir], [{:func_ff, [], [{:a, [], AsmTest}, {:b, [], AsmTest}]}, {:and, [context: Elixir, import: Kernel], [{:is_float, [contezt: Elixir, import: Kernel], [{:a, [], AsmTest}]}, {:is_float, [contezt: Elixir, import: Kernel], [{:b, [], AsmTest}]}]}]}
   """
-  defp when_and_float(func) do
+  def when_and_float(func) do
   	{:when, [context: Elixir],
   		[
   			get_func_all("f", func),
