@@ -168,61 +168,57 @@ defmodule Asm do
   end
 
   @doc """
-  when_and_int64(func) generates the function with a when clause that all of arguments of the function should be int64.
+  when_and_int64(func, module) generates the function in the context of the module with a when clause that all of arguments of the function should be int64.
 
   ## Examples
-    iex> Asm.when_and_int64(quote do: func(a, b))
-    {:when, [context: Elixir], [{:func_ii, [], [{:a, [], AsmTest}, {:b, [], AsmTest}]}, {:and, [context: Elixir, import: Kernel], [{{:., [], [{:__aliases__, [alias: false], [:Asm]}, :is_int64]}, [], [{:a, [], AsmTest}]}, {{:., [], [{:__aliases__, [alias: false], [:Asm]}, :is_int64]}, [], [{:b, [], AsmTest}]}]}]}
-
+  	iex> Asm.when_and_int64(quote do func(a,b) end, nil) |> Macro.to_string
+  	"func_ii(a, b) when is_int64(a) and is_int64(b)"
   """
-  def when_and_int64(func) do
-  	{:when, [context: Elixir],
-  		[
-  			get_func_all("i", func),
-  			{:and, [context: Elixir, import: Kernel],
-  				args(func)
-  				|> Enum.map(& {{:., [], [{:__aliases__, [alias: false], [:Asm]}, :is_int64]}, [], [&1]})
-  			}
-  		]
-  	}
+  def when_and_int64(func, nil), do: when_and_int64(func, Elixir)
+  def when_and_int64(func, module) do
+  	quote do
+  		unquote(get_func_all("i", func))
+  		when unquote({:and, [context: module, import: Kernel],
+  			args(func)
+  			|> Enum.map(& quote do: is_int64(unquote(&1)))
+  		})
+  	end
   end
 
   @doc """
-  when_and_uint64(func) generates the function with a when clause that all of arguments of the function should be uint64.
+  when_and_uint64(func, module) generates the function in the context of the module with a when clause that all of arguments of the function should be uint64.
 
   ## Examples
-    iex> Asm.when_and_uint64(quote do: func(a, b))
-    {:when, [context: Elixir], [{:func_uu, [], [{:a, [], AsmTest}, {:b, [], AsmTest}]}, {:and, [context: Elixir, import: Kernel], [{{:., [], [{:__aliases__, [alias: false], [:Asm]}, :is_uint64]}, [], [{:a, [], AsmTest}]}, {{:., [], [{:__aliases__, [alias: false], [:Asm]}, :is_uint64]}, [], [{:b, [], AsmTest}]}]}]}
+  	iex> Asm.when_and_uint64(quote do func(a,b) end, nil) |> Macro.to_string
+  	"func_uu(a, b) when is_uint64(a) and is_uint64(b)"
   """
-  def when_and_uint64(func) do
-  	{:when, [context: Elixir],
-  		[
-  			get_func_all("u", func),
-  			{:and, [context: Elixir, import: Kernel],
-  				args(func)
-  				|> Enum.map(& {{:., [], [{:__aliases__, [alias: false], [:Asm]}, :is_uint64]}, [], [&1]})
-  			}
-  		]
-  	}
+  def when_and_uint64(func, nil), do: when_and_uint64(func, Elixir)
+  def when_and_uint64(func, module) do
+  	quote do
+  		unquote(get_func_all("u", func))
+  		when unquote({:and, [context: module, import: Kernel],
+  			args(func)
+  			|> Enum.map(& quote do: is_uint64(unquote(&1)))
+  		})
+  	end
   end
 
   @doc """
-  when_and_float64(func) generates the function with a when clause that all of arguments of the function should be float.
+  when_and_float(func, module) generates the function with a when clause that all of arguments of the function should be float.
 
   ## Examples
-    iex> Asm.when_and_float(quote do: func(a, b))
-    {:when, [context: Elixir], [{:func_ff, [], [{:a, [], AsmTest}, {:b, [], AsmTest}]}, {:and, [context: Elixir, import: Kernel], [{:is_float, [contezt: Elixir, import: Kernel], [{:a, [], AsmTest}]}, {:is_float, [contezt: Elixir, import: Kernel], [{:b, [], AsmTest}]}]}]}
+  	iex> Asm.when_and_float(quote do func(a,b) end, nil) |> Macro.to_string
+  	"func_ff(a, b) when is_float(a) and is_float(b)"
   """
-  def when_and_float(func) do
-  	{:when, [context: Elixir],
-  		[
-  			get_func_all("f", func),
-  			{:and, [context: Elixir, import: Kernel],
-  				args(func)
-  				|> Enum.map(& {:is_float, [contezt: Elixir, import: Kernel], [&1]})
-  			}
-  		]
-  	}
+  def when_and_float(func, nil), do: when_and_float(func, Elixir)
+  def when_and_float(func, module) do
+  	quote do
+  		unquote(get_func_all("f", func))
+  		when unquote({:and, [context: module, import: Kernel],
+  			args(func)
+  			|> Enum.map(& quote do: is_float(unquote(&1)))
+  		})
+  	end
   end
 
   @doc """
@@ -257,9 +253,9 @@ defmodule Asm do
     put_env(__ENV__.module, get_name_arity(func))
   	quote do
   		def unquote(func), unquote(do_clause)
-  		def unquote(when_and_int64(func)), unquote(do_clause)
-  		def unquote(when_and_uint64(func)), unquote(do_clause)
-  		def unquote(when_and_float(func)), unquote(do_clause)
+  		def unquote(when_and_int64(func, __ENV__.module)), unquote(do_clause)
+  		def unquote(when_and_uint64(func, __ENV__.module)), unquote(do_clause)
+  		def unquote(when_and_float(func, __ENV__.module)), unquote(do_clause)
   	end
   end
 
