@@ -10,6 +10,12 @@ Currently, it provides the following:
 
 * `min_int` is the constant value of minimum of INT64.
 
+* `max_uint` is the constant value of maxium of UINT64.
+
+* `min_uint` is the constant value of minimum of UINT64.
+
+`BigNum` module is also provided. This module is used for passing an integer by BigNum from/to NIF.
+
 ## Installation
 
 The package can be installed
@@ -18,7 +24,7 @@ by adding `asm` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:asm, "~> 0.0.7"}
+    {:asm, "~> 0.0.8"}
   ]
 end
 ```
