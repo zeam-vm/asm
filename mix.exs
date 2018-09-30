@@ -5,7 +5,7 @@ defmodule Asm.MixProject do
     [
       app: :asm,
       version: "0.0.8",
-      elixir: "~> 1.6",
+      elixir: "~> 1.7 ",
       description: "Asm is aimed at implementing an inline assembler.",
       package: [
         maintainers: ["Susumu YAMAZAKI"],
@@ -28,7 +28,7 @@ defmodule Asm.MixProject do
   defp deps do
     [
       {:constants, "~> 0.1.0"},
-      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:ex_doc, "<= 0.19.0", only: :dev},
     ]
   end
 end
