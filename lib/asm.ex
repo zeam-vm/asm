@@ -1,21 +1,6 @@
 defmodule Asm do
   use Constants
 
-  @name :max_int
-  @value 0x7fff_ffff_ffff_ffff
-
-  @name :min_int
-  @value -0x8000_0000_0000_0000
-
-
-  @name :max_uint
-  @value 0xffff_ffff_ffff_ffff
-
-  @name :min_uint
-  @value 0
-
-
-
   @moduledoc """
   Asm aimed at implementing an inline assembler.
 
@@ -26,7 +11,21 @@ defmodule Asm do
   * `is_bignum` macro that can be used in `when` clauses to judge that a value needs BigNum representation, that is, it is an integer but not within INT64 nor UINT64.
   * `max_int` is the constant value of maxium of INT64.
   * `min_int` is the constant value of minimum of INT64.
+  * `max_uint` is the constant value of maxium of UINT64.
+  * `min_uint` is the constant value of minimum of UINT64.
   """
+
+  @name :max_int
+  @value 0x7fff_ffff_ffff_ffff
+
+  @name :min_int
+  @value -0x8000_0000_0000_0000
+
+  @name :max_uint
+  @value 0xffff_ffff_ffff_ffff
+
+  @name :min_uint
+  @value 0
 
   @doc """
   is_int64(value) returns true if the value is a signed integer, equals or is less than max_int and equals or is greater than min_int.
