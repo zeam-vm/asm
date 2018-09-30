@@ -4,7 +4,7 @@ defmodule Asm.MixProject do
   def project do
     [
       app: :asm,
-      version: "0.0.8",
+      version: "0.0.9",
       elixir: "~> 1.7 ",
       description: "Asm is aimed at implementing an inline assembler.",
       package: [

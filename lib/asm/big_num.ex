@@ -6,24 +6,24 @@ defmodule Asm.BigNum do
   @moduledoc """
   Asm.BigNum is an implementation of BigNum for NIF interface.
   """
-  defp is_negative(number) when number >= 0, do: false
-  defp is_negative(number) when number <  0, do: true
+  defp is_negative(number) when number >= 0, do: 0
+  defp is_negative(number) when number <  0, do: 1
 
   @doc """
   from_int(number) converts a number from integer to BigNum.
 
   ## Examples
   iex> Asm.BigNum.from_int(0)
-  {false, [0]}
+  {0, [0]}
 
   iex> Asm.BigNum.from_int(Asm.max_uint + 1)
-  {false, [1, 0]}
+  {0, [1, 0]}
 
   iex> Asm.BigNum.from_int(-1)
-  {true, [1]}
+  {1, [1]}
 
   iex> Asm.BigNum.from_int(-(Asm.max_uint + 1))
-  {true, [1, 0]}
+  {1, [1, 0]}
   """
   def from_int(number) when is_integer(number) do
     {number |> is_negative, number |> abs |> from_int_p}
@@ -54,8 +54,8 @@ defmodule Asm.BigNum do
   def to_int({is_negative, bignum_p}) do
     result = bignum_p |> Enum.reduce(0, & &1 + bsl(&2, 64))
     case is_negative do
-      false -> result
-      true  -> -result
+      0 -> result
+      1  -> -result
     end
   end
 end
