@@ -17,13 +17,13 @@ defmodule Asm.BigNum do
   {0, [0]}
 
   iex> Asm.BigNum.from_int(Asm.max_uint + 1)
-  {0, [1, 0]}
+  {0, [0, 1]}
 
   iex> Asm.BigNum.from_int(-1)
   {1, [1]}
 
   iex> Asm.BigNum.from_int(-(Asm.max_uint + 1))
-  {1, [1, 0]}
+  {1, [0, 1]}
   """
   def from_int(number) when is_integer(number) do
     {number |> is_negative, number |> abs |> from_int_p}
@@ -33,7 +33,7 @@ defmodule Asm.BigNum do
   defp from_int_p(number) when is_integer(number) do
     lower = number &&& Asm.max_uint
     higher = bsr(number, 64)
-    from_int_p(higher) ++ [lower]
+    [lower] ++ from_int_p(higher)
   end
 
   @doc """
@@ -52,7 +52,7 @@ defmodule Asm.BigNum do
     -0x1_0000_0000_0000_0000
   """
   def to_int({is_negative, bignum_p}) do
-    result = bignum_p |> Enum.reduce(0, & &1 + bsl(&2, 64))
+    result = bignum_p |> Enum.reverse |> Enum.reduce(0, & &1 + bsl(&2, 64))
     case is_negative do
       0 -> result
       1  -> -result
