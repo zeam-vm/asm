@@ -24,7 +24,7 @@ by adding `asm` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:asm, "~> 0.0.9"}
+    {:asm, "~> 0.0.10"}
   ]
 end
 ```
